@@ -1,6 +1,6 @@
 FROM golang:alpine as overmind
 
-RUN go install github.com/DarthSim/overmind/v2@v2.2.2
+RUN go install github.com/DarthSim/overmind/v2@v2.4.0
 
 FROM golang:alpine as runner
 
@@ -30,7 +30,7 @@ RUN mkdir /app
 
 WORKDIR /data
 
-RUN echo "gitea_runner: act_runner register --instance \$GITEA_INSTANCE --token \$GITEA_TOKEN --no-interactive; DOCKER_HOST=tcp://127.0.0.1:8081 act_runner daemon" > Procfile \
+RUN echo "gitea_runner: act_runner register --instance \$GITEA_INSTANCE --token \$GITEA_TOKEN --no-interactive; DOCKER_HOST=tcp://127.0.0.1:8081 act_runner daemon" > /app/Procfile \
     && echo "proxy: autoscaler-proxy \$AUTOSCALER_OPTS" >> /app/Procfile
 
 COPY --from=overmind /go/bin/overmind /usr/bin/overmind
