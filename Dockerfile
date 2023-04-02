@@ -26,13 +26,15 @@ FROM alpine
 
 RUN apk add tmux
 
-WORKDIR /app
+RUN mkdir /app
+
+WORKDIR /data
 
 RUN echo "gitea_runner: act_runner register --instance \$GITEA_INSTANCE --token \$GITEA_TOKEN --no-interactive; DOCKER_HOST=tcp://127.0.0.1:8081 act_runner daemon" > Procfile \
-    && echo "proxy: autoscaler-proxy" >> Procfile
+    && echo "proxy: autoscaler-proxy \$AUTOSCALER_OPTS" >> /app/Procfile
 
 COPY --from=overmind /go/bin/overmind /usr/bin/overmind
 COPY --from=runner /build/act_runner /usr/bin/act_runner
 COPY --from=proxy /build/autoscaler-proxy /usr/bin/autoscaler-proxy
 
-ENTRYPOINT ["overmind", "start"]
+ENTRYPOINT ["overmind", "start", "--procfile", "/app/Procfile"]
