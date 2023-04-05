@@ -16,11 +16,7 @@ FROM golang:alpine as proxy
 
 RUN apk add git
 
-WORKDIR /build
-
-RUN git clone https://github.com/JonasBak/autoscaler-proxy.git .
-
-RUN go build .
+RUN go install github.com/JonasBak/autoscaler-proxy@511395e
 
 FROM alpine
 
@@ -37,6 +33,6 @@ RUN echo "gitea_runner: test -f .runner || act_runner register --instance \$GITE
 
 COPY --from=hivemind /go/bin/hivemind /usr/bin/hivemind
 COPY --from=runner /build/act_runner /usr/bin/act_runner
-COPY --from=proxy /build/autoscaler-proxy /usr/bin/autoscaler-proxy
+COPY --from=proxy /go/bin/autoscaler-proxy /usr/bin/autoscaler-proxy
 
 ENTRYPOINT ["hivemind", "--root", "/data", "/app/Procfile"]
