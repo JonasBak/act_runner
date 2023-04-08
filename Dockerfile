@@ -16,7 +16,7 @@ FROM golang:alpine as proxy
 
 RUN apk add git
 
-RUN go install github.com/JonasBak/autoscaler-proxy@511395e
+RUN go install github.com/JonasBak/autoscaler-proxy@5e67fe2
 
 FROM alpine
 
